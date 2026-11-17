@@ -1,0 +1,33 @@
+name: Publish APK to Release
+
+on:
+  workflow_run:
+    workflows: ["Build Android APK"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Download APK from Build Workflow
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidTVDebloat2-debug
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release and Attach APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.event.workflow_run.run_number }}
+          name: AndroidTVDebloat2 v1.0.${{ github.event.workflow_run.run_number }}
+          files: "*.apk"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
