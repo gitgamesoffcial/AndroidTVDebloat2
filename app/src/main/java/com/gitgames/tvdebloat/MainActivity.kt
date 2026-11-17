@@ -1,4 +1,4 @@
-package com.gitgames.tvdebloat
+package com.gitgames.steamlauchertv
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
